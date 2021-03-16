@@ -9,8 +9,7 @@ static int vertexP = 0;//0..VERTEX_NUM-2 index pointing to the next available co
 int polygonsP = 0;//0..POLYGON_NUM-1 index pointing to the next available space to store the next polygon.
 static bool drawn = false;
 static bool moving = false;
-static bool rotation_clockwise = true;
-static bool rotation_counter = false;
+int rotation_direction = 16;
 RGBAColor borderColor[VERTEX_NUM];
 RGBAColor convexFillColor[VERTEX_NUM];
 Pattern fillPattern = SOLID;
@@ -127,7 +126,8 @@ void onMouseClick(int button, int state, int x, int y)
         polygons[polygonsP].ty = 0;
         polygons[polygonsP].sx = 1;
         polygons[polygonsP].sy = 1;
-        polygons[polygonsP].mode =  (Movement)(UP | RIGHT | CCW_ROTATE);//Initial movement mode: rotates counter-clockwise, and moves up and right
+
+        polygons[polygonsP].mode =  (Movement)(UP | RIGHT | rotation_direction);//Initial movement mode: rotates counter-clockwise, and moves up and right
         polygonsP++;
         vertexP = 0;
         drawn = false;

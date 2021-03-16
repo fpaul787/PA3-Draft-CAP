@@ -122,6 +122,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     return TRUE;
 }
+
 void CheckItem(HWND hWnd, int id) {
     CheckMenuItem(GetMenu(hWnd), id, MF_CHECKED);
     int allIDs[] = { ID_FILLPATTERN_SOLID ,ID_FILLPATTERN_HATCHED ,ID_FILLPATTERN_FLY ,ID_FILLPATTERN_HALFTONE};
@@ -129,6 +130,15 @@ void CheckItem(HWND hWnd, int id) {
         if(allIDs[i]!=id)
             CheckMenuItem(GetMenu(hWnd), allIDs[i], MF_UNCHECKED);
 }
+
+void CheckRotationItem(HWND hWnd, int id) {
+    CheckMenuItem(GetMenu(hWnd), id, MF_CHECKED);
+    int allIDs[] = { ID_ROTATION_CLOCKWISE, ID_ROTATION_COUNTER };
+    for (int i = 0; i < 2; i++)
+        if (allIDs[i] != id)
+            CheckMenuItem(GetMenu(hWnd), allIDs[i], MF_UNCHECKED);
+}
+
 BOOL parseColor(TCHAR str[], RGBAColor color[]) {
     TCHAR* next;
     TCHAR* rest = _wcsdup(str);//safe 16-bit version of strdup
@@ -145,6 +155,7 @@ BOOL parseColor(TCHAR str[], RGBAColor color[]) {
     color[currentVertex] = { -1,-1,-1,-1 };//The # of vertices for a polygon is variable
     return TRUE;
 }
+
 INT_PTR CALLBACK PickBorderColor(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     {
@@ -168,6 +179,7 @@ INT_PTR CALLBACK PickBorderColor(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     }
     return (INT_PTR)FALSE;
 }
+
 INT_PTR CALLBACK PickBorderPattern(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     unsigned long y = 0XFFFF;
@@ -194,6 +206,7 @@ INT_PTR CALLBACK PickBorderPattern(HWND hDlg, UINT message, WPARAM wParam, LPARA
     }
     return (INT_PTR)FALSE;
 }
+
 INT_PTR CALLBACK PickConvexFillAreaColor(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     {
@@ -217,6 +230,7 @@ INT_PTR CALLBACK PickConvexFillAreaColor(HWND hDlg, UINT message, WPARAM wParam,
     }
     return (INT_PTR)FALSE;
 }
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -260,6 +274,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case ID_FILLPATTERN_FLY:
             fillPattern = FLY;
             CheckItem(hWnd, ID_FILLPATTERN_FLY);
+            break;
+        case ID_ROTATION_CLOCKWISE:
+            rotation_direction = 32;
+            CheckRotationItem(hWnd, ID_ROTATION_CLOCKWISE);
+            break;
+        case ID_ROTATION_COUNTER:
+            rotation_direction = 16;
+            CheckRotationItem(hWnd, ID_ROTATION_COUNTER);
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
