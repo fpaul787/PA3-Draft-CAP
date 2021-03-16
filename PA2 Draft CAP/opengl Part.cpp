@@ -14,7 +14,7 @@ RGBAColor convexFillColor[VERTEX_NUM];
 Pattern fillPattern = SOLID;
 unsigned int borderPattern = 0xFFFF;
 
-// init
+
 void init() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glMatrixMode(GL_PROJECTION);
