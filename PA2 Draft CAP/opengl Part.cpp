@@ -9,6 +9,8 @@ static int vertexP = 0;//0..VERTEX_NUM-2 index pointing to the next available co
 int polygonsP = 0;//0..POLYGON_NUM-1 index pointing to the next available space to store the next polygon.
 static bool drawn = false;
 static bool moving = false;
+static bool rotation_clockwise = true;
+static bool rotation_counter = false;
 RGBAColor borderColor[VERTEX_NUM];
 RGBAColor convexFillColor[VERTEX_NUM];
 Pattern fillPattern = SOLID;
@@ -33,6 +35,7 @@ void init() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
+
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT);
     int rx, ry;
@@ -50,6 +53,7 @@ void display(void){
     }
     glFlush();
 }
+
 void onMouseMove(int x, int y) {
     y = (glutGet(GLUT_WINDOW_HEIGHT) - y) * (float)Y_MAX / glutGet(GLUT_WINDOW_HEIGHT);
     x = x * ((float)X_MAX / glutGet(GLUT_WINDOW_WIDTH));
@@ -77,6 +81,7 @@ void onMouseMove(int x, int y) {
     previousMouseLoc[1] = y;
     drawn = true;
 }
+
 void onMouseClick(int button, int state, int x, int y)
 {
     recentMouseButton = button;
@@ -141,6 +146,7 @@ void onMouseClick(int button, int state, int x, int y)
         drawn = false;
     }
 }
+
 void transform(void) {
     double xFrom, xTo, yFrom, yTo;
     for (int i = 0; i < polygonsP;i++) {
@@ -207,6 +213,7 @@ void transform(void) {
     }
     glutPostRedisplay();
 }
+
 void onKeystroke(unsigned char key, int x, int y) {
     if (key == ' ' && polygonsP > 0) {
         if (moving)
@@ -216,6 +223,7 @@ void onKeystroke(unsigned char key, int x, int y) {
         moving = !moving;
     }     
 }
+
 int openGLMain()
 {
     int argc = 1;
