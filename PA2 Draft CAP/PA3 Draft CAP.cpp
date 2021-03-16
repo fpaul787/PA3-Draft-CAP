@@ -139,6 +139,14 @@ void CheckRotationItem(HWND hWnd, int id) {
             CheckMenuItem(GetMenu(hWnd), allIDs[i], MF_UNCHECKED);
 }
 
+void CheckMovementItem(HWND hWnd, int id) {
+    CheckMenuItem(GetMenu(hWnd), id, MF_CHECKED);
+    int allIDs[] = { ID_DIRECTION_RIGHT_UP, ID_DIRECTION_LEFT_UP, ID_DIRECTION_RIGHT_DOWN, ID_DIRECTION_LEFT_DOWN };
+    for (int i = 0; i < 4; i++)
+        if (allIDs[i] != id)
+            CheckMenuItem(GetMenu(hWnd), allIDs[i], MF_UNCHECKED);
+}
+
 BOOL parseColor(TCHAR str[], RGBAColor color[]) {
     TCHAR* next;
     TCHAR* rest = _wcsdup(str);//safe 16-bit version of strdup
@@ -231,6 +239,32 @@ INT_PTR CALLBACK PickConvexFillAreaColor(HWND hDlg, UINT message, WPARAM wParam,
     return (INT_PTR)FALSE;
 }
 
+INT_PTR CALLBACK PickRotationSpeed(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    unsigned long q = ROTATION_SPEED;
+    {
+        TCHAR buffer[MAX_PATH];
+        switch (message)
+        {
+        case WM_COMMAND:
+            int x = LOWORD(wParam);
+            switch (x)
+            {
+            case IDOK:
+                GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));                
+                if (swscanf_s(buffer, L"%f", &q) != 1)
+                    break;
+                rotation_speed = (int)q;
+                // Fall through. 
+            case IDXCANCEL:
+                EndDialog(hDlg, wParam);
+                return TRUE;
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -276,12 +310,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CheckItem(hWnd, ID_FILLPATTERN_FLY);
             break;
         case ID_ROTATION_CLOCKWISE:
-            rotation_direction = 32;
+            initial_rotation_direction = 32;
             CheckRotationItem(hWnd, ID_ROTATION_CLOCKWISE);
             break;
         case ID_ROTATION_COUNTER:
-            rotation_direction = 16;
+            initial_rotation_direction = 16;
             CheckRotationItem(hWnd, ID_ROTATION_COUNTER);
+            break;
+        case ID_MOVEMENT_SPEED:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG4), hWnd, PickRotationSpeed);//IDD_DIALOG4
+            break;
+        case ID_DIRECTION_RIGHT_UP:
+            initial_x_movement = RIGHT;
+            initial_y_movement = UP;
+            CheckMovementItem(hWnd, ID_DIRECTION_RIGHT_UP);
+            break;
+        case ID_DIRECTION_LEFT_UP:
+            initial_x_movement = LEFT;
+            initial_y_movement = UP;
+            CheckMovementItem(hWnd, ID_DIRECTION_LEFT_UP);
+            break;
+        case ID_DIRECTION_RIGHT_DOWN:
+            initial_x_movement = RIGHT;
+            initial_y_movement = DOWN;
+            CheckMovementItem(hWnd, ID_DIRECTION_RIGHT_DOWN);
+            break;
+        case ID_DIRECTION_LEFT_DOWN:
+            initial_x_movement = LEFT;
+            initial_y_movement = DOWN;
+            CheckMovementItem(hWnd, ID_DIRECTION_LEFT_DOWN);
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);

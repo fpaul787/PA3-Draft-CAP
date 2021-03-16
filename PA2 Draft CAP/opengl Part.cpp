@@ -9,7 +9,10 @@ static int vertexP = 0;//0..VERTEX_NUM-2 index pointing to the next available co
 int polygonsP = 0;//0..POLYGON_NUM-1 index pointing to the next available space to store the next polygon.
 static bool drawn = false;
 static bool moving = false;
-int rotation_direction = 16;
+int initial_rotation_direction = 16;
+float rotation_speed = 0.02;
+int initial_y_movement = 1;
+int initial_x_movement = 4;
 RGBAColor borderColor[VERTEX_NUM];
 RGBAColor convexFillColor[VERTEX_NUM];
 Pattern fillPattern = SOLID;
@@ -127,7 +130,7 @@ void onMouseClick(int button, int state, int x, int y)
         polygons[polygonsP].sx = 1;
         polygons[polygonsP].sy = 1;
 
-        polygons[polygonsP].mode =  (Movement)(UP | RIGHT | rotation_direction);//Initial movement mode: rotates counter-clockwise, and moves up and right
+        polygons[polygonsP].mode =  (Movement)(initial_y_movement | initial_x_movement | initial_rotation_direction);//Initial movement mode: rotates counter-clockwise, and moves up and right
         polygonsP++;
         vertexP = 0;
         drawn = false;
@@ -150,8 +153,8 @@ void onMouseClick(int button, int state, int x, int y)
 void transform(void) {
     double xFrom, xTo, yFrom, yTo;
     for (int i = 0; i < polygonsP;i++) {
-        polygons[i].rtheta += (polygons[i].mode & CCW_ROTATE) ? ROTATION_SPEED :
-            (polygons[i].mode & CW_ROTATE) ? -ROTATION_SPEED : 0;
+        polygons[i].rtheta += (polygons[i].mode & CCW_ROTATE) ? rotation_speed :
+            (polygons[i].mode & CW_ROTATE) ? -rotation_speed : 0;
         polygons[i].rtheta += polygons[i].rtheta > 360 ? -360 : polygons[i].rtheta < 0 ? 360 : 0;
         polygons[i].tx += (polygons[i].mode & RIGHT) ? X_SPEED : (polygons[i].mode & LEFT) ? -X_SPEED : 0;
         polygons[i].ty += (polygons[i].mode & UP) ? Y_SPEED : (polygons[i].mode & DOWN)? -Y_SPEED :0;
