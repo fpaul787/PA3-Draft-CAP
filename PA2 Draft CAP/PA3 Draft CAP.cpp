@@ -241,7 +241,7 @@ INT_PTR CALLBACK PickConvexFillAreaColor(HWND hDlg, UINT message, WPARAM wParam,
 
 INT_PTR CALLBACK PickRotationSpeed(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    unsigned long q = ROTATION_SPEED;
+    float q = ROTATION_SPEED;
     {
         TCHAR buffer[MAX_PATH];
         switch (message)
@@ -254,7 +254,38 @@ INT_PTR CALLBACK PickRotationSpeed(HWND hDlg, UINT message, WPARAM wParam, LPARA
                 GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));                
                 if (swscanf_s(buffer, L"%f", &q) != 1)
                     break;
-                rotation_speed = (int)q;
+                rotation_speed = (double)q;
+                // Fall through. 
+            case IDXCANCEL:
+                EndDialog(hDlg, wParam);
+                return TRUE;
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK PickConstantMovementSpeed(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    float x_s = X_SPEED;
+    float y_s = Y_SPEED;
+    {
+        TCHAR buffer[MAX_PATH];
+        switch (message)
+        {
+        case WM_COMMAND:
+            int x = LOWORD(wParam);
+            switch (x)
+            {
+            case IDOK:
+                GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &x_s) != 1)
+                    break;
+                x_speed_constant = (double)x_s;
+                GetDlgItemText(hDlg, IDC_EDIT2, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &y_s) != 1)
+                    break;               
+               y_speed_constant = (double)y_s;
                 // Fall through. 
             case IDXCANCEL:
                 EndDialog(hDlg, wParam);
@@ -339,6 +370,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             initial_x_movement = LEFT;
             initial_y_movement = DOWN;
             CheckMovementItem(hWnd, ID_DIRECTION_LEFT_DOWN);
+            break;
+        case ID_MOVEMENT_CONSTANT_SPEED:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG5), hWnd, PickConstantMovementSpeed);//IDD_DIALOG4
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);

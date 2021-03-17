@@ -17,8 +17,10 @@
 #define IDD_DIALOG3                     132
 #define IDI_ICON2                       132
 #define IDD_DIALOG4                     133
+#define IDD_DIALOG5                     134
 #define IDXCANCEL                       1002
 #define IDC_EDIT1                       1003
+#define IDC_EDIT2                       1004
 #define ID_FILE_OPENAWINDOW             32771
 #define ID_OPEN_ANEWWINDOW              32772
 #define ID_SETTINGS_FILLCOLOR           32773
@@ -50,6 +52,8 @@
 #define ID_DIRECTION_LEFT_UP            32799
 #define ID_DIRECTION_RIGHT_UP           32800
 #define ID_DIRECTION_LEFT_DOWN          32801
+#define ID_MOVEMENT_CONSTANTMOVEMENTSPEED 32802
+#define ID_MOVEMENT_CONSTANT_SPEED      32803
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -58,7 +62,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         32802
+#define _APS_NEXT_COMMAND_VALUE         32804
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           110
 #endif

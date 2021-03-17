@@ -53,6 +53,7 @@ typedef struct {
     Movement mode;//current movement
     Movement pastMode;//movement before bouncing
     Vertex *vertices;//vertex list
+    double vx, vy;
 }ShadedPolygon;
 void polygonCentroid2(int polygonIndex, int* x, int* y);
 void polygonContainingRectangle(int polygonIndex, double* xFrom, double* xTo, double* yFrom, double* yTo);
@@ -62,9 +63,11 @@ extern RGBAColor convexFillColor[VERTEX_NUM];
 extern Pattern fillPattern;
 extern unsigned int borderPattern;
 extern int initial_rotation_direction;
-extern float rotation_speed;
+extern double rotation_speed;
 extern int initial_y_movement;
 extern int initial_x_movement;
+extern double x_speed_constant;
+extern double y_speed_constant;
 extern ShadedPolygon polygons[POLYGON_NUM];
 static GLubyte fly[] = {//1024 bits, 128 bytes//represents a mask
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
