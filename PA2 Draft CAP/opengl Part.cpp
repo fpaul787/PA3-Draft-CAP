@@ -15,6 +15,11 @@ int initial_y_movement = UP;
 int initial_x_movement = RIGHT;
 double x_speed_constant = X_SPEED;
 double y_speed_constant = Y_SPEED;
+int center_x;
+int center_y;
+int radius;
+double given_shrink_speed = BOUNCE_BACK_PERIOD;
+double given_shrink_ratio = SHRINK_WHEN_BOUNCE;
 RGBAColor borderColor[VERTEX_NUM];
 RGBAColor convexFillColor[VERTEX_NUM];
 Pattern fillPattern = SOLID;
@@ -133,8 +138,14 @@ void onMouseClick(int button, int state, int x, int y)
         polygons[polygonsP].sy = 1;
 
         polygons[polygonsP].mode =  (Movement)(initial_y_movement | initial_x_movement | initial_rotation_direction);//Initial movement mode: rotates counter-clockwise, and moves up and right
+        
         polygons[polygonsP].vx = x_speed_constant;
         polygons[polygonsP].vy = y_speed_constant;
+        if (given_shrink_ratio > 1) {
+            given_shrink_ratio = SHRINK_WHEN_BOUNCE;
+        }
+        polygons[polygonsP].shrink_speed = given_shrink_speed;
+        polygons[polygonsP].shrink_ratio = given_shrink_ratio;
 
         polygonsP++;
         vertexP = 0;
@@ -171,7 +182,7 @@ void transform(void) {
             polygons[i].mode = (Movement)(polygons[i].mode ^ (CW_ROTATE | CCW_ROTATE | LEFT | RIGHT));
             continue;
         }
-        if (polygons[i].sx < (1 - SHRINK_WHEN_BOUNCE) && (polygons[i].mode & HOR_SHRINK)) {
+        if (polygons[i].sx < (1 - polygons[i].shrink_ratio) && (polygons[i].mode & HOR_SHRINK)) {
             polygons[i].mode = HOR_GROWTH;
             continue;
         }
@@ -180,39 +191,39 @@ void transform(void) {
             polygons[i].mode = (Movement)(polygons[i].mode ^ (CW_ROTATE | CCW_ROTATE | UP | DOWN));
             continue;
         }
-        if (polygons[i].sy < (1 - SHRINK_WHEN_BOUNCE) && (polygons[i].mode & VERT_SHRINK)) {
+        if (polygons[i].sy < (1 - polygons[i].shrink_ratio) && (polygons[i].mode & VERT_SHRINK)) {
             polygons[i].mode = VERT_GROWTH;
             continue;
         }
         polygonContainingRectangle(i, &xFrom, &xTo, &yFrom, &yTo);
         if (polygons[i].mode & HOR_SHRINK) {
-            polygons[i].tx += (polygons[i].pastMode & RIGHT) ? xTo / BOUNCE_BACK_PERIOD / polygons[i].sx
-                : xFrom / BOUNCE_BACK_PERIOD / polygons[i].sx;
-            polygons[i].sx -= 1 / BOUNCE_BACK_PERIOD;
+            polygons[i].tx += (polygons[i].pastMode & RIGHT) ? xTo / polygons[i].shrink_speed / polygons[i].sx
+               : xFrom / polygons[i].shrink_speed / polygons[i].sx;
+            polygons[i].sx -= 1 / polygons[i].shrink_speed;
             continue;
         }
         if (polygons[i].mode & HOR_GROWTH) {
-            polygons[i].tx -= (polygons[i].pastMode & RIGHT) ? xTo / BOUNCE_BACK_PERIOD / polygons[i].sx
-                : xFrom / BOUNCE_BACK_PERIOD / polygons[i].sx;
-            polygons[i].sx += 1 / BOUNCE_BACK_PERIOD;
+            polygons[i].tx -= (polygons[i].pastMode & RIGHT) ? xTo / polygons[i].shrink_speed / polygons[i].sx
+                : xFrom / polygons[i].shrink_speed / polygons[i].sx;
+            polygons[i].sx += 1 / polygons[i].shrink_speed;
             continue;
         }
         if (polygons[i].mode & VERT_SHRINK) {
-            polygons[i].ty += (polygons[i].pastMode & UP) ? yTo / BOUNCE_BACK_PERIOD / polygons[i].sy
-                : yFrom / BOUNCE_BACK_PERIOD / polygons[i].sy;
-            polygons[i].sy -= 1 / BOUNCE_BACK_PERIOD;
+            polygons[i].ty += (polygons[i].pastMode & UP) ? yTo / polygons[i].shrink_speed / polygons[i].sy
+                : yFrom / polygons[i].shrink_speed / polygons[i].sy;
+            polygons[i].sy -= 1 / polygons[i].shrink_speed;
             continue;
         }
         if (polygons[i].mode & VERT_GROWTH) {
-            polygons[i].ty -= (polygons[i].pastMode & UP) ? yTo / BOUNCE_BACK_PERIOD / polygons[i].sy
-                : yFrom / BOUNCE_BACK_PERIOD / polygons[i].sy;
-            polygons[i].sy += 1 / BOUNCE_BACK_PERIOD;
+            polygons[i].ty -= (polygons[i].pastMode & UP) ? yTo / polygons[i].shrink_speed / polygons[i].sy
+                : yFrom / polygons[i].shrink_speed / polygons[i].sy;
+            polygons[i].sy += 1 / polygons[i].shrink_speed;
             continue;
         }
         if (polygons[i].tx + polygons[i].centroidX + xTo >= X_MAX // hit the right border
             || polygons[i].tx + polygons[i].centroidX + xFrom <= 0){  // hit the left border
             polygons[i].pastMode = polygons[i].mode;
-            polygons[i].mode = HOR_SHRINK ;
+            polygons[i].mode = HOR_SHRINK;
             continue;
         }
         if (polygons[i].ty + polygons[i].centroidY + yTo >= Y_MAX // hit the top border

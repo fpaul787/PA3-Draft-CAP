@@ -13,6 +13,7 @@
 #define ROTATION_SPEED 0.02//degrees
 #define BOUNCE_BACK_PERIOD 2000.0
 #define SHRINK_WHEN_BOUNCE .15//ratio between 0 and 1
+#define VERTEX_NUM 201 // or 301
 typedef struct {
     GLfloat r, g, b;
 } RGBColor;
@@ -54,6 +55,8 @@ typedef struct {
     Movement pastMode;//movement before bouncing
     Vertex *vertices;//vertex list
     double vx, vy;
+    double shrink_speed;
+    double shrink_ratio;
 }ShadedPolygon;
 void polygonCentroid2(int polygonIndex, int* x, int* y);
 void polygonContainingRectangle(int polygonIndex, double* xFrom, double* xTo, double* yFrom, double* yTo);
@@ -68,6 +71,11 @@ extern int initial_y_movement;
 extern int initial_x_movement;
 extern double x_speed_constant;
 extern double y_speed_constant;
+extern int center_x;
+extern int center_y;
+extern int radius;
+extern double given_shrink_speed;
+extern double given_shrink_ratio;
 extern ShadedPolygon polygons[POLYGON_NUM];
 static GLubyte fly[] = {//1024 bits, 128 bytes//represents a mask
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

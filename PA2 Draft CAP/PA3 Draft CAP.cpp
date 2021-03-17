@@ -296,6 +296,94 @@ INT_PTR CALLBACK PickConstantMovementSpeed(HWND hDlg, UINT message, WPARAM wPara
     return (INT_PTR)FALSE;
 }
 
+INT_PTR CALLBACK AddCircle(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    float x_s = 1;
+    float y_s = 1;
+    float r = 1;
+    {
+        TCHAR buffer[MAX_PATH];
+        switch (message)
+        {
+        case WM_COMMAND:
+            int x = LOWORD(wParam);
+            switch (x)
+            {
+            case IDOK:
+                GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &x_s) != 1)
+                    break;
+                center_x = (double)x_s;
+                GetDlgItemText(hDlg, IDC_EDIT2, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &y_s) != 1)
+                    break;
+                center_y = (double)y_s;
+                GetDlgItemText(hDlg, IDC_EDIT3, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &r) != 1)
+                    break;
+                radius = (double)radius;
+                // Fall through. 
+            case IDXCANCEL:
+                EndDialog(hDlg, wParam);
+                return TRUE;
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK PickShrinkSpeed(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    float q = BOUNCE_BACK_PERIOD;
+    {
+        TCHAR buffer[MAX_PATH];
+        switch (message)
+        {
+        case WM_COMMAND:
+            int x = LOWORD(wParam);
+            switch (x)
+            {
+            case IDOK:
+                GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &q) != 1)
+                    break;
+                given_shrink_speed = (double)q;
+                // Fall through. 
+            case IDXCANCEL:
+                EndDialog(hDlg, wParam);
+                return TRUE;
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK PickShrinkRatio(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    float q = SHRINK_WHEN_BOUNCE;
+    {
+        TCHAR buffer[MAX_PATH];
+        switch (message)
+        {
+        case WM_COMMAND:
+            int x = LOWORD(wParam);
+            switch (x)
+            {
+            case IDOK:
+                GetDlgItemText(hDlg, IDC_EDIT1, buffer, sizeof(buffer));
+                if (swscanf_s(buffer, L"%f", &q) != 1)
+                    break;
+                given_shrink_ratio = (double)q;
+                // Fall through. 
+            case IDXCANCEL:
+                EndDialog(hDlg, wParam);
+                return TRUE;
+            }
+        }
+    }
+    return (INT_PTR)FALSE;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -372,7 +460,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             CheckMovementItem(hWnd, ID_DIRECTION_LEFT_DOWN);
             break;
         case ID_MOVEMENT_CONSTANT_SPEED:
-            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG5), hWnd, PickConstantMovementSpeed);//IDD_DIALOG4
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG5), hWnd, PickConstantMovementSpeed);//IDD_DIALOG5
+            break;
+        case ID_ADDOTHERSHAPES_ADDACIRCLE:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG6), hWnd, AddCircle);//IDD_DIALOG6
+            break;
+        case ID_YES_SHRINKSPEED:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG7), hWnd, PickShrinkSpeed);//IDD_DIALOG7
+            break;
+        case ID_YES_SHRINKRATIO:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG8), hWnd, PickShrinkRatio);//IDD_DIALOG8
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
